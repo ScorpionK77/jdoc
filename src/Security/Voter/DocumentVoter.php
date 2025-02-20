@@ -27,7 +27,6 @@ class DocumentVoter extends Voter
             return false;
         }
         return true;
-
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -35,14 +34,13 @@ class DocumentVoter extends Voter
         if ($attribute == self::VIEW)
         {
             return $subject->getState() == 'published' || $this->isOwner($subject, $token);
-        }
-
-        if (empty($token))
+        } elseif ($attribute == self::ADD)
         {
-            return false;
+            return !empty($token) && $token->getUser() instanceof UserInterface;
+        } else
+        {
+            return $this->isOwner($subject, $token);
         }
-
-        return $this->isOwner($subject, $token);
     }
 
     private function isOwner(mixed $subject, TokenInterface $token)
