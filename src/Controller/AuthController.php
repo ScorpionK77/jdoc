@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
 #[Route('/api/v1', name: 'api.')]
 class AuthController extends AbstractController
 {
-    #[Route(path: '/auth', methods: ['POST'])]
+    #[Route(path: '/auth', name: 'login_check',  methods: ['POST'])]
     #[OA\Response(response: 200, description: 'Авторизация пользователя.', content: new OA\JsonContent(properties:[
         new OA\Property(property: "user", type: "integer")
     ]))]
@@ -23,9 +23,12 @@ class AuthController extends AbstractController
             new OA\Property(property: "password", type: "string", example: 'test'),
         ]
     ))]
-
-    public function loginAction(#[CurrentUser] UserInterface $user): JsonResponse
+    public function loginAction(#[CurrentUser] ?UserInterface $user): JsonResponse
     {
+        //dd($user);
+
+        //$token = $this->container->get('security.token_storage')->getToken();
+        //dd($token);
         if (null === $user)
         {
             return $this->json([

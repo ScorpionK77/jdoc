@@ -5,10 +5,12 @@ namespace App\Controller\Document;
 use App\Entity\Document;
 use App\Model\ErrorResponse;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
@@ -26,17 +28,28 @@ use OpenApi\Attributes as OA;
 ))]
 class EditAction extends AbstractController
 {
-    public function __invoke(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    public function __invoke(EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
     {
-        $document = new Document();
-        $this->denyAccessUnlessGranted('add', $document, 'Вы не можете создавать документы');
+        $dao = $entityManager->getRepository(Document::class);
+        $document = $dao->find($id);
 
-        $token = $this->container->get('security.token_storage')->getToken();
-        $user = $token->getUser();
-        $document->setUser($user);
+        if (empty($document))
+        {
+            throw new NotFoundHttpException('Документ не найден');
+        }
+        $this->denyAccessUnlessGranted('edit', $document, 'У Вас нет доступа на изменение этого документа');
 
-        // сохраним в базе, и достанем, чтобы получить идентификатор
-        $entityManager->persist($document);
+        if ($document->getState() == 'published')
+        {
+            throw new BadRequestHttpException('Документ опубликован');
+        }
+
+        $content = json_decode($request->getContent(), true);
+        if (empty($content['document']['payload']))
+        {
+            throw new BadRequestHttpException('Не задано тело документа');
+        }
+        $document->setPayload($content['document']['payload']);
         $entityManager->flush();
 
         return $this->json(['document' => $document]);

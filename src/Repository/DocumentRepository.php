@@ -18,12 +18,12 @@ class DocumentRepository extends ServiceEntityRepository
         parent::__construct($registry, Document::class);
     }
 
-    public function getDocuments(UserInterface|null $user, int $page = 10, int $perPage = 0): DocumentListResponse
+    public function getDocuments(UserInterface|null $user, int $page = 1, int $perPage = 10): DocumentListResponse
     {
         $offset = max($page - 1, 0) * $perPage;
 
         $qb = $this->createQueryBuilder('p');
-        $qb->setMaxResults($page)->setFirstResult($offset);
+        $qb->setMaxResults($perPage)->setFirstResult($offset);
 
         $expr = $qb->expr();
         $par = $qb->createNamedParameter(DocumentState::STATUS_PUBLISHED);

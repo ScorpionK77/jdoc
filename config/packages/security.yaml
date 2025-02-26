@@ -16,9 +16,12 @@ security:
             lazy: true
             provider: app_user_provider
             json_login:
-                check_path: api_login_check
+                login_path: api.login_check
+                check_path: api.login_check
                 username_path: username
                 password_path: password
+                success_handler: App\Security\AuthenticationSuccessHandler
+                #failure_handler: App\Security\AccessDeniedHandler
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
