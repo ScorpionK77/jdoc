@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -22,6 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $vclogin = null;
 
     #[ORM\Column(type: Types::TEXT, length: 255)]
+    #[Ignore]
     private ?string $vcpassword = null;
 
     public function getIuserid(): ?int
@@ -48,6 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Ignore]
     public function getVcpassword(): ?string
     {
         return $this->vcpassword;
@@ -60,6 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Ignore]
     public function getPassword(): ?string
     {
         return $this->vcpassword;
@@ -75,6 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         //unset($this->vcpassword);
     }
 
+    #[Ignore]
     public function getUserIdentifier(): string
     {
         return (string) $this->iuserid;

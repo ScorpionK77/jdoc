@@ -5,15 +5,17 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: vclogin
+            id: App\Security\JwtUserProvider
+        #    entity:
+        #        class: App\Entity\User
+        #        property: vclogin
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
+            stateless: true
             provider: app_user_provider
             json_login:
                 login_path: api.login_check
@@ -22,7 +24,10 @@ security:
                 password_path: password
                 success_handler: App\Security\AuthenticationSuccessHandler
                 #failure_handler: App\Security\AccessDeniedHandler
-
+            access_token:
+                token_handler: App\Security\AccessTokenHandler
+                token_extractors: header
+                failure_handler: App\Security\AccessFailureHandler
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

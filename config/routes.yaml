@@ -7,7 +7,6 @@ controllers:
 api.login_check:
     path:       /api/v1/auth
     methods:    POST
-    controller: App\Controller\AuthController::loginAction
 
 nelmio_api_doc:
     resource: '@NelmioApiDocBundle/config/routing/swaggerui.xml'

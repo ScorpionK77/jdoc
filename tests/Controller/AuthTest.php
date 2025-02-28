@@ -25,28 +25,10 @@ class AuthTest extends AbstractControllerTest
         $this->assertJsonDocumentMatchesSchema($responseContent, [
             'type' => 'object',
             'required' => [
-                'document', 'pagination'
+                'token'
             ],
             'properties' => [
-                'document' => [
-                    'type'       => 'array',
-                    'required'   => ['idocid', 'state','createAt','modifyAt'],
-                    'properties' => [
-                        'idocid'   => ['type' => 'integer'],
-                        'state'    => ['type' => 'string', 'enum' => ['draft','published']],
-                        'createAt' => ['type' => 'string'],
-                        'modifyAt' => ['type' => 'string'],
-                    ],
-                ],
-                'pagination' => [
-                    'type'       => 'object',
-                    'required'   => ['page', 'perPage','total'],
-                    'properties' => [
-                        'page'    => ['type' => 'integer'],
-                        'perPage' => ['type' => 'integer'],
-                        'total'   => ['type' => 'integer']
-                    ],
-                ]
+                'token'   => ['type' => 'string']
             ]
         ]);
     }

@@ -3,6 +3,7 @@ namespace App\Tests\Controller;
 
 use App\Tests\AbstractControllerTest;
 use App\Repository\UserRepository;
+use App\Services\JWT\JWTManager;
 use PHPUnit\Framework\Attributes\Depends;
 
 class DocumentStoreTest extends AbstractControllerTest
@@ -35,9 +36,17 @@ class DocumentStoreTest extends AbstractControllerTest
         // авторизовываем пользователя
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['vclogin' => 'test']);
-        $this->client->loginUser($user);
-        $cookie = $this->client->getCookieJar()->get('MOCKSESSID');
-        $this->client->getCookieJar()->set($cookie);
+
+        // создаем токен авторизации
+        $jwtManager = new JWTManager(getenv('TOKEN_TTL'));
+        $token = $jwtManager->create($user);
+        $customHeaders = [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ];
+        $this->client->setServerParameters($customHeaders);
+        //$this->client->loginUser($user);
+        //$cookie = $this->client->getCookieJar()->get('MOCKSESSID');
+        //$this->client->getCookieJar()->set($cookie);
     }
 
     public function testAddDocument(): int
@@ -91,7 +100,7 @@ class DocumentStoreTest extends AbstractControllerTest
         return $docId;
     }
 
-    #[Depends('testEditDocument')]
+    #[Depends('testPublishDocument')]
     public function testDeleteDocument($docId): void
     {
         $this->client->request('DELETE', '/api/v1/document/' . $docId);
