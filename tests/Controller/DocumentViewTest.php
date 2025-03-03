@@ -47,9 +47,18 @@ class DocumentViewTest extends AbstractControllerTest
         ]);
         // должно быть 5 штук
         $this->assertCount(5, $responseContent['document'], 'Документов должно быть 5 штук');
-        // вернем первый элемент
+        $docId = $responseContent['document'][0]['idocid'];
+        // смотрим что после авторизации получается
+        $this->Auth();
+        $this->client->request('GET', '/api/v1/document?page=1&perPage=10');
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        //dd($responseContent);
+        $this->assertResponseIsSuccessful();
+        // должно быть 10 штук
+        $this->assertCount(10, $responseContent['document'], 'Документов должно быть 10 штук');
 
-        return $responseContent['document'][0]['idocid'];
+        // вернем первый элемент
+        return $docId;
     }
 
     #[Depends('testDocuments')]
@@ -81,5 +90,21 @@ class DocumentViewTest extends AbstractControllerTest
         ]);
 
         return $docId;
+    }
+
+    public function testDocumentNotFound(): void
+    {
+        $this->client->request('GET', '/api/v1/document/999999');
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+
+        //dd($responseContent);
+
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => [
+                'code', 'message'
+            ],
+        ]);
     }
 }

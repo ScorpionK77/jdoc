@@ -34,19 +34,7 @@ class DocumentStoreTest extends AbstractControllerTest
     {
         parent::setUp();
         // авторизовываем пользователя
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['vclogin' => 'test']);
-
-        // создаем токен авторизации
-        $jwtManager = new JWTManager(getenv('TOKEN_TTL'));
-        $token = $jwtManager->create($user);
-        $customHeaders = [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-        ];
-        $this->client->setServerParameters($customHeaders);
-        //$this->client->loginUser($user);
-        //$cookie = $this->client->getCookieJar()->get('MOCKSESSID');
-        //$this->client->getCookieJar()->set($cookie);
+        $this->Auth();
     }
 
     public function testAddDocument(): int
@@ -83,6 +71,20 @@ class DocumentStoreTest extends AbstractControllerTest
         $this->assertResponseIsSuccessful();
         $this->assertJsonDocumentMatchesSchema($responseContent, $this->getDocumentShema());
 
+        // пытаемся отправить пустое тело документа
+        $payload = [
+            'document' => [
+            ]
+        ];
+        $this->client->request('PUT', '/api/v1/document/' . $docId, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => [
+                'code', 'message'
+            ],
+        ]);
         return $docId;
     }
 
@@ -97,10 +99,51 @@ class DocumentStoreTest extends AbstractControllerTest
 
         $this->assertEquals('published', $responseContent['document']['state'], 'Документ не в том статусе');
 
+        // публикация не существующего документа
+        $this->client->request('POST', '/api/v1/document/9999/publish');
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => [
+                'code', 'message'
+            ],
+        ]);
         return $docId;
     }
 
     #[Depends('testPublishDocument')]
+    public function testEditPublishDocument($docId): int
+    {
+        // нельзя редактировать опубликованный документ
+        $payload = [
+            'document' => [
+                'payload' => [
+                    'pkey'      => 'idocid',
+                    'pageSize'  =>	100,
+                    'perm' => [
+                        'canAdd' => false,
+                        'canEdit' => false,
+                        'canDelete' => false,
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request('PUT', '/api/v1/document/' . $docId, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => [
+                'code', 'message'
+            ],
+        ]);
+
+        return $docId;
+    }
+
+    #[Depends('testEditPublishDocument')]
     public function testDeleteDocument($docId): void
     {
         $this->client->request('DELETE', '/api/v1/document/' . $docId);
@@ -115,5 +158,16 @@ class DocumentStoreTest extends AbstractControllerTest
         ]);
 
         $this->assertEquals(true, $responseContent['succes'], 'Документ не удален');
+
+        // повторное удаление приведет к ошибке не найдено
+        $this->client->request('DELETE', '/api/v1/document/' . $docId);
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonDocumentMatchesSchema($responseContent, [
+            'type' => 'object',
+            'required' => [
+                'code', 'message'
+            ],
+        ]);
     }
 }
