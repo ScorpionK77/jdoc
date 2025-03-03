@@ -19,7 +19,7 @@ class Document
     #[ORM\SequenceGenerator(sequenceName: 'document_seq')]
     #[ORM\Column(type: Types::INTEGER)]
     #[OA\Property(description: 'Уникальный идентификатор документа.')]
-    private ?int $idocid;
+    private int $idocid;
 
     #[ORM\JoinColumn(name: 'iuserid', referencedColumnName: 'iuserid', nullable: false)]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -28,7 +28,7 @@ class Document
 
     #[ORM\Column(type: Types::STRING)]
     #[OA\Property(description: 'Статус документа')]
-    private ?string $state = DocumentState::STATUS_DRAFT;
+    private string $state = DocumentState::STATUS_DRAFT;
 
     #[ORM\Column(type: Types::JSON)]
     #[OA\Property(description: 'JSON тело документа.')]
