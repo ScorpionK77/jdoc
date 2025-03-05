@@ -14,8 +14,6 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
     public function getUserBadgeFrom(#[\SensitiveParameter] string $accessToken): UserBadge
     {
         $payload = $this->jwtManager->parse($accessToken);
-        //dd($payload);
-
         return new UserBadge($payload['id'], null, $payload);
     }
 }

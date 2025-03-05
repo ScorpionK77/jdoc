@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
@@ -31,9 +32,15 @@ class DeleteAction extends AbstractController
 
         $this->denyAccessUnlessGranted('delete', $document, 'У Вас нет доступа на удаление этого документа');
 
-        $entityManager->remove($document);
-        $entityManager->flush();
-
+        $entityManager->beginTransaction();
+        try {
+            $entityManager->remove($document);
+            $entityManager->flush();
+            $entityManager->commit();
+        } catch (\Exception  $e) {
+            $entityManager->rollback();
+            throw new BadRequestHttpException('Не удалось удалить документ', $e);
+        }
         return $this->json(['succes' => true]);
     }
 }

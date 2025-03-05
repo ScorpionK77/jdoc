@@ -19,10 +19,6 @@ class UserController extends AbstractController
     #[OA\Response(response: 200, description: 'Данные пользователя.', content: new Model(type: User::class))]
     public function profileAction(#[CurrentUser] ?UserInterface $user): JsonResponse
     {
-        //dd($user);
-
-        //$token = $this->container->get('security.token_storage')->getToken();
-        //dd($token);
         if (null === $user)
         {
             return $this->json([

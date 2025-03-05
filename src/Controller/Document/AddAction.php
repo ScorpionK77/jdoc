@@ -8,6 +8,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
@@ -29,8 +30,15 @@ class AddAction extends AbstractController
         $document->setUser($user);
 
         // сохраним в базе, и достанем, чтобы получить идентификатор
-        $entityManager->persist($document);
-        $entityManager->flush();
+        $entityManager->beginTransaction();
+        try {
+            $entityManager->persist($document);
+            $entityManager->flush();
+            $entityManager->commit();
+        } catch (\Exception  $e) {
+            $entityManager->rollback();
+            throw new BadRequestHttpException('Не удалось создать документ', $e);
+        }
 
         return $this->json(['document' => $document]);
     }

@@ -50,7 +50,14 @@ class EditAction extends AbstractController
             throw new BadRequestHttpException('Не задано тело документа');
         }
         $document->setPayload($content['document']['payload']);
-        $entityManager->flush();
+        $entityManager->beginTransaction();
+        try {
+            $entityManager->flush();
+            $entityManager->commit();
+        } catch (\Exception  $e) {
+            $entityManager->rollback();
+            throw new BadRequestHttpException('Не удалось отредактировать документ', $e);
+        }
 
         return $this->json(['document' => $document]);
     }

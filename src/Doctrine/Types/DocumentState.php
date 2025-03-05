@@ -20,5 +20,3 @@ class DocumentState extends Type
         return 'document_state';
     }
 }
-
-//Type::addType('document_state', DocumentState::class);

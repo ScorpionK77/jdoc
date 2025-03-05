@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
@@ -34,7 +35,14 @@ class PublishAction extends AbstractController
         if ($document->getState() == 'draft')
         {
             $document->setState('published');
-            $entityManager->flush();
+            $entityManager->beginTransaction();
+            try {
+                $entityManager->flush();
+                $entityManager->commit();
+            } catch (\Exception  $e) {
+                $entityManager->rollback();
+                throw new BadRequestHttpException('Не удалось опубликовать документ', $e);
+            }
         }
         return $this->json(['document' => $document]);
     }
