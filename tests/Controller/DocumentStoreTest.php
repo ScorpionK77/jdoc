@@ -2,8 +2,6 @@
 namespace App\Tests\Controller;
 
 use App\Tests\AbstractControllerTest;
-use App\Repository\UserRepository;
-use App\Services\JWT\JWTManager;
 use PHPUnit\Framework\Attributes\Depends;
 
 class DocumentStoreTest extends AbstractControllerTest

@@ -2,6 +2,7 @@
 namespace App\Tests\Controller;
 
 use App\Tests\AbstractControllerTest;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AuthTest extends AbstractControllerTest
 {
@@ -10,46 +11,54 @@ class AuthTest extends AbstractControllerTest
      *
      * @return void
      */
-    public function testAuth(): void
+    #[DataProvider('providerUsers')]
+    public function testAuth(array $user, int $code, array $schema): void
     {
-        // авторизация не зарегистрированного пользователя
-        $content = [
-            'username' => 'notfound',
-            'password' => 'test',
-        ];
-
-        $this->client->request('POST', '/api/v1/auth', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($content));
+        $this->client->request('POST', '/api/v1/auth', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($user));
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertResponseStatusCodeSame(401);
-        $this->assertJsonDocumentMatchesSchema($responseContent, [
-            'type' => 'object',
-            'required' => [
-                'error'
-            ],
-            'properties' => [
-                'error'   => ['type' => 'string']
-            ]
-        ]);
+        if ($code == 200)
+        {
+            $this->assertResponseIsSuccessful();
+        } else
+        {
+            $this->assertResponseStatusCodeSame($code);
+        }
+        $this->assertJsonDocumentMatchesSchema($responseContent, $schema);
+    }
 
-        // ... зарегистрированного пользователя
-        $content = [
-            'username' => 'test',
-            'password' => 'test',
+    public static function providerUsers(): \Generator
+    {
+        yield [
+            [
+                'username' => 'notfound',
+                'password' => 'test',
+            ],
+            401,
+            [
+                'type' => 'object',
+                'required' => [
+                    'error'
+                ],
+                'properties' => [
+                    'error'   => ['type' => 'string']
+                ]
+            ]
         ];
-
-        $this->client->request('POST', '/api/v1/auth', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($content));
-        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
-        //dd($responseContent);
-        $this->assertResponseIsSuccessful();
-        // проверяем формат выдачи
-        $this->assertJsonDocumentMatchesSchema($responseContent, [
-            'type' => 'object',
-            'required' => [
-                'token'
+        yield [
+            [
+                'username' => 'test',
+                'password' => 'test',
             ],
-            'properties' => [
-                'token'   => ['type' => 'string']
+            200,
+            [
+                'type' => 'object',
+                'required' => [
+                    'token'
+                ],
+                'properties' => [
+                    'token'   => ['type' => 'string']
+                ]
             ]
-        ]);
+        ];
     }
 }
