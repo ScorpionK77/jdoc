@@ -25,8 +25,7 @@ class AddAction extends AbstractController
         $document = new Document();
         $this->denyAccessUnlessGranted('add', $document, 'Вы не можете создавать документы');
 
-        $token = $this->container->get('security.token_storage')->getToken();
-        $user = $token->getUser();
+        $user = $this->getUser();
         $document->setUser($user);
 
         // сохраним в базе, и достанем, чтобы получить идентификатор
