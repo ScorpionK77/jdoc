@@ -9,8 +9,64 @@ nelmio_api_doc:
         Bearer:
           type: http
           scheme: bearer
+      schemas:
+        Credentials:
+          type: object
+          properties:
+            username:
+              description: 'Логин'
+              type: string
+              example: user1
+            password:
+              description: 'Пароль'
+              type: string
+              example: password123
+        ResultSucess:
+          type: object
+          properties:
+            success:
+              type: boolean
+        ErrorResult:
+          type: object
+          properties:
+            success:
+              type: boolean
+            message:
+              type: string
       security:
         - Bearer: []
+    paths:
+      /api/v1/auth:
+        post:
+          tags:
+            - Auth
+          summary: 'Авторизация'
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Credentials'
+          responses:
+            '200':
+              description: 'Авторизация успешна'
+              headers:
+                Set-Cookie:
+                  description: Устанавливает куку с токеном авторизации
+                  schema:
+                    type: string
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ResultSucess'
+            '401':
+              description: 'Неверные учетные данные'
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResult'
   areas: # to filter documented areas
     path_patterns:
       - ^/api/v1
+    documentation:
+      security:
+        - Bearer: [ ]
