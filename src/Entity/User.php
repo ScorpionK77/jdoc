@@ -16,7 +16,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\SequenceGenerator(sequenceName: 'users_seq')]
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private ?int $iuserid = null;
 
     #[ORM\Column(type: Types::TEXT, length: 255)]
@@ -81,6 +81,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Ignore]
     public function getUserIdentifier(): string
     {
-        return (string) $this->iuserid;
+        return (string)($this->iuserid ?? 'noid');
     }
 }

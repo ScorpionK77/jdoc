@@ -30,6 +30,9 @@ class Document
     #[OA\Property(description: 'Статус документа')]
     private string $state = DocumentState::STATUS_DRAFT;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[ORM\Column(type: Types::JSON)]
     #[OA\Property(description: 'JSON тело документа.')]
     private ?array $payload = [];
@@ -75,11 +78,18 @@ class Document
         return $this;
     }
 
+    /**
+     * @return mixed[]|null
+     */
     public function getPayload(): ?array
     {
         return $this->payload;
     }
 
+    /**
+     * @param mixed[]|null $payload
+     * @return $this
+     */
     public function setPayload(?array $payload): static
     {
         $this->payload = $payload;
@@ -109,13 +119,13 @@ class Document
     }
 
     #[ORM\PrePersist]
-    public function initCreateAt()
+    public function initCreateAt(): void
     {
         $this->createAt = new \DateTimeImmutable();
     }
 
     #[ORM\PreFlush]
-    public function updateLastModify()
+    public function updateLastModify(): void
     {
         $this->setModifyAt(new \DateTimeImmutable());
     }

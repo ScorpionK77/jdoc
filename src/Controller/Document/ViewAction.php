@@ -4,6 +4,7 @@ namespace App\Controller\Document;
 
 use App\Entity\Document;
 use App\Model\DocumentListResponse;
+use App\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class ViewAction extends AbstractController
 {
     public function __invoke(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+        /** @var DocumentRepository $dao */
         $dao = $entityManager->getRepository(Document::class);
 
         $page = $request->query->getInt('page', 1);

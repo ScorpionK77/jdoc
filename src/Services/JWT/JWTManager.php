@@ -36,7 +36,7 @@ class JWTManager
      * Валидация токена и возвращение данных их него
      *
      * @param string $token
-     * @return array
+     * @return array<string, mixed>
      */
     public function parse(string $token): array
     {

@@ -9,9 +9,13 @@ class JWTEncoder
     public function __construct()
     {
         // Clean up the key by removing "base64:" prefix and "=" padding
-        $this->signingKey = str_replace(['base64:', '='], '', getenv('APP_KEY'));
+        $this->signingKey = str_replace(['base64:', '='], '', (string)getenv('APP_KEY'));
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     * @return string
+     */
     public function encode(array $payload): string
     {
         $header = [
@@ -19,8 +23,8 @@ class JWTEncoder
             'type' => 'JWT'
         ];
 
-        $encodedHeader = rtrim(strtr(base64_encode(json_encode($header)), '+/', '-_'), '=');
-        $encodedPayload = rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=');
+        $encodedHeader = rtrim(strtr(base64_encode((string)json_encode($header)), '+/', '-_'), '=');
+        $encodedPayload = rtrim(strtr(base64_encode((string)json_encode($payload)), '+/', '-_'), '=');
 
         $signature = hash_hmac('sha512', "$encodedHeader.$encodedPayload", $this->signingKey, true);
         $encodedSignature = rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
@@ -28,6 +32,10 @@ class JWTEncoder
         return "{$encodedHeader}.{$encodedPayload}.{$encodedSignature}";
     }
 
+    /**
+     * @param string $token
+     * @return array<string, mixed>|null
+     */
     public function decode(string $token) : ?array
     {
         $tokenParts = explode('.', $token);

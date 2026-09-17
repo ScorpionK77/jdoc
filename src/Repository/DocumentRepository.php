@@ -11,6 +11,9 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @extends ServiceEntityRepository<Document>
+ */
 class DocumentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -32,7 +35,7 @@ class DocumentRepository extends ServiceEntityRepository
         if ($user instanceof UserInterface)
         {
             $expr = $qb->expr();
-            $par = $qb->createNamedParameter($user->getIuserid());
+            $par = $qb->createNamedParameter($user->getUserIdentifier());
             $qb->orWhere($expr->eq('p.user', $par));
         }
 

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
-    public function onKernelException(ExceptionEvent  $event)
+    public function onKernelException(ExceptionEvent  $event): void
     {
         $e = $event->getThrowable();
 
