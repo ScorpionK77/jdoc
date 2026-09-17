@@ -105,6 +105,3 @@ docker compose exec php bin/console doctrine:migrations:migrate -n --env=test
   "roles": ["ROLE_USER"]
 }
 ```
-
----
-*Документация сгенерирована автоматически на основе спецификации OpenAPI 3.0.0.*
