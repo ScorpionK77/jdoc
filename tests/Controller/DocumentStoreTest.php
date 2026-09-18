@@ -35,7 +35,20 @@ class DocumentStoreTest extends AbstractControllerTest
         $this->Auth();
     }
 
-    public function testAddDocument(): int
+    public function testStoreDocument(): void
+    {
+        $docId = $this->addDocument();
+
+        $this->editDocument($docId);
+
+        $this->publishDocument($docId);
+
+        $this->editPublishDocument($docId);
+
+        $this->deleteDocument($docId);
+    }
+
+    public function addDocument(): int
     {
         $this->client->request('POST', '/api/v1/document');
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
@@ -46,8 +59,7 @@ class DocumentStoreTest extends AbstractControllerTest
         return $responseContent['document']['idocid'];
     }
 
-    #[Depends('testAddDocument')]
-    public function testEditDocument($docId): int
+    public function editDocument($docId): int
     {
         $payload = [
             'document' => [
@@ -86,8 +98,7 @@ class DocumentStoreTest extends AbstractControllerTest
         return $docId;
     }
 
-    #[Depends('testEditDocument')]
-    public function testPublishDocument($docId): int
+    public function publishDocument($docId): int
     {
         $this->client->request('POST', '/api/v1/document/' . $docId . '/publish');
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);
@@ -110,8 +121,7 @@ class DocumentStoreTest extends AbstractControllerTest
         return $docId;
     }
 
-    #[Depends('testPublishDocument')]
-    public function testEditPublishDocument($docId): int
+    public function editPublishDocument($docId): int
     {
         // нельзя редактировать опубликованный документ
         $payload = [
@@ -141,8 +151,7 @@ class DocumentStoreTest extends AbstractControllerTest
         return $docId;
     }
 
-    #[Depends('testEditPublishDocument')]
-    public function testDeleteDocument($docId): void
+    public function deleteDocument($docId): void
     {
         $this->client->request('DELETE', '/api/v1/document/' . $docId);
         $responseContent = json_decode($this->client->getResponse()->getContent(), true);

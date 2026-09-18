@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
 #[Route('/api/v1/document/{id}', name: 'api.document.viewid', methods: ['GET'], requirements: ['id' => '\d+'])]
+#[OA\Tag(name: "Document", description: "Документы")]
 #[OA\Response(response: 200, description: 'Возвращает документ по идентификатору.', content: new Model(type: Document::class))]
 #[OA\Response(response: 404, description: 'Документ не найден.', content: new Model(type: ErrorResponse::class))]
 #[OA\PathParameter(name: 'id', description: 'Идентификатор документа', required: true)]

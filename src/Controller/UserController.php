@@ -13,6 +13,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use OpenApi\Attributes as OA;
 
 #[Route('/api/v1', name: 'api.')]
+#[OA\Tag(name: "User", description: "Пользователи")]
 class UserController extends AbstractController
 {
     #[Route(path: '/profile', name: 'profile',  methods: ['GET'])]

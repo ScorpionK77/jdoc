@@ -1,0 +1,4 @@
+parameters:
+    mailer:
+        support_mail: '%env(string:db_setting:mailer:support_mail)%'
+        message_signature: '%env(string:db_setting:mailer:message_signature)%'

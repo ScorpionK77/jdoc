@@ -8,9 +8,9 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
 
-class UserFixture extends Fixture
+class UserPendingFixture extends Fixture
 {
-    public const USER_REFERENCE = 'current_user';
+    public const USER_REFERENCE = 'test_user';
 
     public function __construct(private UserPasswordHasherInterface $hasher)
     {
@@ -19,11 +19,11 @@ class UserFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $user = new User();
-        $user->setVclogin('test')
-            ->setVcemail('test@mail.ru')
-            ->setIstateid(UserState::APPROVED);
+        $user->setVclogin('test_user')
+            ->setVcemail('test_user@mail.ru')
+            ->setIstateid(UserState::PENDING_APPROVAL);
 
-        $password = $this->hasher->hashPassword($user, 'test');
+        $password = $this->hasher->hashPassword($user, 'SecurePassword123');
         $user->setVcpassword($password);
 
         $manager->persist($user);

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Уведомление от JDoc{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px; }
+        .header { font-size: 24px; font-weight: bold; color: #1a73e8; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 12px 24px; margin: 20px 0; font-size: 16px; font-weight: bold; color: #ffffff !important; background-color: #1a73e8; text-decoration: none; border-radius: 4px; }
+        .code-box { background: #f5f5f5; border: 1px dashed #cccccc; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 2px; margin: 15px 0; border-radius: 4px; }
+        .signature { margin-top: 25px; color: #555555; font-style: italic; }
+        .footer { margin-top: 30px; font-size: 12px; color: #777777; border-top: 1px solid #eeeeee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    {# Шапка одинаковая для всех писем #}
+    <div class="header">{% block email_header %}JDoc{% endblock %}</div>
+
+    {# Сюда будет вставляться уникальный текст каждого письма #}
+    {% block body %}{% endblock %}
+
+    {# Общий блок подписи во всех письмах #}
+    {% if message_signature is defined and message_signature is not empty %}
+        <div class="signature">
+            <p>{{ message_signature|nl2br|raw }}</p>
+        </div>
+    {% endif %}
+
+    {# Футер одинаковый для всех писем #}
+    <div class="footer">
+        {% block footer %}
+            <p>Если вы не совершали никаких действий на нашем сайте, просто проигнорируйте это письмо.</p>
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>

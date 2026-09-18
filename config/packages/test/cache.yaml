@@ -1,0 +1,6 @@
+framework:
+    cache:
+        # Переопределяем адаптер приложения на массив в оперативной памяти PHP
+        app: cache.adapter.array
+        # Переопределяем системный кэш (чтобы тесты не забивали системный Redis)
+        system: cache.adapter.array

@@ -13,6 +13,11 @@ class AccessFailureHandler implements AuthenticationFailureHandlerInterface
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
         $errorMessage = strtr($exception->getMessageKey(), $exception->getMessageData());
+        $e = $exception->getPrevious();
+        if ($e instanceof AuthenticationException)
+        {
+            $errorMessage = $e->getMessage();
+        }
         return new JsonResponse(['error' => $errorMessage], JsonResponse::HTTP_UNAUTHORIZED);
     }
 }

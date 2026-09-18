@@ -6,9 +6,6 @@ security:
     providers:
         app_user_provider:
             id: App\Security\JwtUserProvider
-        #    entity:
-        #        class: App\Entity\User
-        #        property: vclogin
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -23,11 +20,12 @@ security:
                 username_path: username
                 password_path: password
                 success_handler: App\Security\AuthenticationSuccessHandler
-                #failure_handler: App\Security\AccessDeniedHandler
+                failure_handler: App\Security\AccessFailureHandler
             access_token:
                 token_handler: App\Security\AccessTokenHandler
                 token_extractors: header
                 failure_handler: App\Security\AccessFailureHandler
+            user_checker: App\Security\UserChecker
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

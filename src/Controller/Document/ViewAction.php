@@ -15,6 +15,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 #[Route('/api/v1/document', name: 'api.document.view', methods: ['GET'])]
+#[OA\Tag(name: "Document", description: "Документы")]
 #[OA\Response(response: 200, description: 'Возвращает список опубликованных документов.', content: new Model(type: DocumentListResponse::class))]
 #[OA\QueryParameter(name: 'page', description: 'Номер страницы')]
 #[OA\QueryParameter(name: 'perPage', description: 'Количество документов на страницу')]

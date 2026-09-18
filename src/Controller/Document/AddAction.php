@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
 #[Route('/api/v1/document', name: 'api.document.add', methods: ['POST'])]
+#[OA\Tag(name: "Document", description: "Документы")]
 #[OA\Response(response: 200, description: 'Создает новый документ.', content: new Model(type: Document::class))]
 #[OA\Response(response: 401, description: 'Нет права доступа на создание.', content: new OA\JsonContent(properties:[
     new OA\Property(property: "code", type: "integer", example: 401),

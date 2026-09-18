@@ -22,7 +22,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         {
             $httpcode = $code = $e->getStatusCode();
         }
-
         $response = new JsonResponse(
             [
                 'code'    => $code,

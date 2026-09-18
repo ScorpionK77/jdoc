@@ -28,4 +28,7 @@
             <file>src/Kernel.php</file>
         </exclude>
     </source>
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+    </extensions>
 </phpunit>

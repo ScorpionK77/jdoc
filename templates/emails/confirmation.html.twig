@@ -1,0 +1,24 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block title %}Подтверждение регистрации{% endblock %}
+{% block email_header %}Добро пожаловать в JDoc!{% endblock %}
+
+{% block body %}
+    <p>Здравствуйте, <strong>{{ username }}</strong>!</p>
+
+    <p>Спасибо за регистрацию в нашей системе. Для активации вашей учетной записи, пожалуйста, подтвердите ваш e-mail адрес, нажав на кнопку ниже:</p>
+
+    <p style="text-align: center;">
+        <a href="{{ confirmationUrl }}" class="btn">Подтвердить регистрацию</a>
+    </p>
+
+    <p>Если кнопка не отображается, вы можете использовать этот код подтверждения на странице активации:</p>
+    <div class="code-box">
+        {{ code }}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <p>Эта ссылка действительна в течение 24 часов.</p>
+    {{ parent() }}
+{% endblock %}

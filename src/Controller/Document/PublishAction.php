@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
 #[Route('/api/v1/document/{id}/publish', name: 'api.document.publish', methods: ['POST'], requirements: ['id' => '\d+'])]
+#[OA\Tag(name: "Document", description: "Документы")]
 #[OA\Response(response: 200, description: 'Публикация документа по идентификатору.', content: new Model(type: Document::class))]
 #[OA\Response(response: 404, description: 'Документ не найден.', content: new Model(type: ErrorResponse::class))]
 #[OA\Response(response: 401, description: 'Нет прав доступа на публикацию.', content: new Model(type: ErrorResponse::class))]
