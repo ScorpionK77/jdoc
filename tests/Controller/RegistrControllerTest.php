@@ -73,7 +73,6 @@ class RegistrControllerTest extends AbstractControllerTest
         $this->assertEquals(UserState::PENDING_APPROVAL, $user->getIstateid());
 
         // 3. Проверяем отправку почты (Symfony Mailer)
-        // Так как Messenger переключен на sync://, воркер выполнился мгновенно, и письмо уже в буфере.
         $this->assertEmailCount(1);
 
         // Извлекаем отправленное письмо для детального анализа содержимого

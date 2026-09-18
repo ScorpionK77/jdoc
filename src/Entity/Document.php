@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use App\EventListener\Entity\EntityChangeListener;
+use App\EventListener\Entity\EntityEventProviderInterface;
+use App\Message\DocumentPublishedMessage;
+use App\Message\UserStateMessage;
 use App\Repository\DocumentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,9 +15,12 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
+#[ORM\EntityListeners([EntityChangeListener::class])]
 #[ORM\HasLifecycleCallbacks]
-class Document
+class Document implements EntityEventProviderInterface
 {
+    use EntityEventProviderTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\SequenceGenerator(sequenceName: 'document_seq')]
@@ -129,4 +136,22 @@ class Document
     {
         $this->setModifyAt(new \DateTimeImmutable());
     }
+
+    public function getPostUpdateEvent(EntityChangeListener $listener, array $changeSet): void
+    {
+        if (isset($changeSet['state']))
+        {
+            /** @var DocumentState|null $newState */
+            $newState = $changeSet['state'][1] ?? null;
+            if ($newState && $newState == DocumentState::STATUS_PUBLISHED)
+            {
+                // уведомим что опубликован документ
+
+
+                $listener->addEvent(new DocumentPublishedMessage($this->getIdocid()));
+            }
+
+        }
+    }
+
 }

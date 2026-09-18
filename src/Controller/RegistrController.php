@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\RegistrationDTO;
 use App\Entity\User;
 use App\Enum\UserState;
+use App\Message\DocumentPublishedMessage;
 use App\Message\UserStateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -101,16 +102,16 @@ class RegistrController extends AbstractController
         return $this->json($content);
     }
 
-    #[Route(path: '/bus', name: 'bus',  methods: ['GET'])]
+    /*#[Route(path: '/bus', name: 'bus',  methods: ['GET'])]
     #[OA\Response(response: 200, description: 'Данные пользователя.', content: new OA\JsonContent(ref: '#/components/schemas/ResultSucess'))]
     public function busAction(MessageBusInterface $bus): JsonResponse
     {
 
-        $bus->dispatch(new UserStateMessage(3));
+        $bus->dispatch(new DocumentPublishedMessage(20));
         $content = [
             'success' => true
         ];
 
         return $this->json($content);
-    }
+    }*/
 }

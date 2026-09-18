@@ -1,0 +1,16 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block title %}Опубликован новый документ{% endblock %}
+{% block email_header %}Уведомление от JDoc{% endblock %}
+
+{% block body %}
+    <p>Здравствуйте <strong>{{ username }}</strong>!</p>
+
+    <p>В системе JDoc был успешно опубликован новый документ.</p>
+
+    <p>Вы можете перейти к просмотру и редактированию документа, нажав на кнопку ниже:</p>
+
+    <p style="text-align: center;">
+        <a href="{{ documentUrl }}" class="btn">Открыть документ</a>
+    </p>
+{% endblock %}
